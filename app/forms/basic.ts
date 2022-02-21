@@ -48,8 +48,10 @@ export const formStructure: FormStructure = [
   },
 ];
 
-export function handleFormData(context: any) {
-  console.log("handleDataFn called!");
+export function handleDataFn(context: any) {
+  console.log("basic form handleDataFn called!");
 
   console.log({ context });
 }
+
+export const successRedirectPath = "/";

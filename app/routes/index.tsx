@@ -6,10 +6,10 @@ export default function Index() {
       <h1>Welcome to Remix Form</h1>
       <ul>
         <li>
-          <Link to="/jimi-hendrix">Basic Form Example</Link>
+          <Link to="/basic-form">Basic Form Example</Link>
         </li>
         <li>
-          <Link to="/contact-us">Mult Part Form</Link>
+          <Link to="/multipart-form">Mult Part Form</Link>
         </li>
         <li>
           <a target="_blank" href="https://remix.run/docs" rel="noreferrer">

@@ -1,5 +1,4 @@
 // Multi step form
-
 import { validation } from "~/services/form/validation";
 import { FormStructure } from "~/services/form/types";
 
@@ -92,3 +91,11 @@ export const contactFormStructure: MultiStepForm = [
     },
   ],
 ];
+
+export function handleDataFn(context: any) {
+  console.log("multipart form handleDataFn called!");
+
+  console.log({ context });
+}
+
+export const successRedirectPath = "/";

@@ -41,3 +41,22 @@ export function MultipartForm({
     </div>
   );
 }
+
+export function BasicForm({
+  context,
+  formStructure,
+}: {
+  context: any;
+  formStructure: FormFieldInput[];
+}) {
+  return (
+    <Form method="post">
+      {formStructure.map((field: FormFieldInput) => {
+        if (field) {
+          return <FormField field={field} context={context} key={field.name} />;
+        }
+      })}
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
