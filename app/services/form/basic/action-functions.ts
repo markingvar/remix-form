@@ -1,5 +1,5 @@
-import { FormFieldInput, validateFieldValue } from "./form-field";
-import { commitSession, getSession } from "./session.server";
+import { FormFieldInput, validateFieldValue } from "../form-field";
+import { commitSession, getSession } from "../session.server";
 import { json, redirect } from "remix";
 
 // Take the form values from the request
@@ -124,7 +124,7 @@ export function validateFormFieldValue({
   }
 }
 
-export async function handleFormAction({
+export async function formActionFunction({
   request,
   formStructure,
   handleDataFn,

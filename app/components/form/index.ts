@@ -1,6 +1,4 @@
-import type { FormFieldInput } from "./form-field";
-
-type FormStructure = FormFieldInput[];
+import { FormStructure } from "~/forms/types";
 
 export const formStructure: FormStructure = [
   {
@@ -50,27 +48,6 @@ export const formStructure: FormStructure = [
     initialValue: "no",
   },
 ];
-
-// Context - desired initial values
-// Get the initial context from the form structure
-export const context = {
-  "likes-jh": {
-    value: "no",
-    errors: [],
-  },
-  "fav-jh-song": {
-    value: "no",
-    errors: [],
-  },
-  "fav-song": {
-    value: "",
-    errors: [],
-  },
-  "likes-rhcp": {
-    value: "no",
-    errors: [],
-  },
-};
 
 // What to do on successful form completion?
 export function onFormCompleted({

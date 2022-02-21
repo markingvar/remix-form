@@ -1,34 +1,23 @@
-import { formStructure, onFormCompleted } from "~/components/form";
-import {
-  ActionFunction,
-  Form,
-  LoaderFunction,
-  redirect,
-  useLoaderData,
-} from "remix";
-import { FormField, validateFieldValue } from "~/components/form/form-field";
-import type { FormFieldInput } from "~/components/form/form-field";
-import {
-  addFormValuesToContext,
-  handleFormAction,
-  validateFormFieldValue,
-} from "~/components/form/action-functions";
-import { getSession } from "~/components/form/session.server";
-import { formLoaderFunction } from "~/components/form/loader-functions";
+import { formStructure, handleFormData } from "~/forms/jimi-hendrix";
+import { ActionFunction, Form, LoaderFunction, useLoaderData } from "remix";
+import { FormField } from "~/services/form/form-field";
+import type { FormFieldInput } from "~/services/form/form-field";
+import { formActionFunction } from "~/services/form/basic/action-functions";
+import { formLoaderFunction } from "~/services/form/loader-function";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return formLoaderFunction({ request, formStructure });
+  return await formLoaderFunction({
+    request,
+    formStructure,
+    formType: "basic",
+  });
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  let handleFormFnResult = await handleFormAction({
+  let handleFormFnResult = await formActionFunction({
     request,
     formStructure,
-    handleDataFn: (ctx: any) => {
-      console.log("handleDataFn called!");
-
-      console.log({ ctx });
-    },
+    handleDataFn: handleFormData,
     successRedirectPath: "/jimi-hendrix",
   });
 
@@ -44,7 +33,9 @@ export default function JimiHendrix() {
   return (
     <Form method="post">
       {formStructure.map((field: FormFieldInput) => {
-        return <FormField field={field} context={context} key={field.name} />;
+        if (field) {
+          return <FormField field={field} context={context} key={field.name} />;
+        }
       })}
       <button type="submit">Submit</button>
     </Form>
