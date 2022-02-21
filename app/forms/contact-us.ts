@@ -52,8 +52,8 @@ export const contactFormStructure: MultiStepForm = [
             initialValue: "",
             required: true,
             validation: {
-              formInputPattern: validation.phoneNumber.pattern,
-              formInputMessage: validation.phoneNumber.message,
+              formInputPattern: validation.emailAddress.pattern,
+              formInputMessage: validation.emailAddress.message,
               patterns: [validation.emailAddress.pattern],
               messages: [validation.emailAddress.message],
             },

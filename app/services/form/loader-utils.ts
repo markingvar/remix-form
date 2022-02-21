@@ -15,7 +15,7 @@ function checkForFieldNameAndValue({
 
   if (contextFieldName) {
     if (typeof contextFieldName?.value !== "string") {
-      console.log("bad value: ", contextFieldName.value);
+      // console.log("bad value: ", contextFieldName.value);
 
       return true;
     }
@@ -48,7 +48,7 @@ function addFieldToContext({
     errors: [],
   };
 
-  console.log("adding field context: ", context);
+  // console.log("adding field context: ", context);
 
   if (field.type === "stateful-radio") {
     field.dependentChildren.forEach((fields) => {

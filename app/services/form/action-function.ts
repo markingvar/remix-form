@@ -50,11 +50,35 @@ async function formActionFunction({
   // Get the current session
   const session = await getSession(request.headers.get("Cookie"));
 
-  let context: any = {};
+  let context: any = session.get("context") ?? {};
+
+  const body = await request.formData();
+
+  let submitType: "back" | "next" | "submit" | string =
+    body.get("submit-type")?.toString() ?? "";
+
+  console.log({ submitType });
+
+  // Multipart - back button
+  if (formType === "multipart") {
+    if (submitType === "back") {
+      context.currentStep -= 1;
+      session.set("context", context);
+
+      return json(
+        {},
+        {
+          headers: {
+            "Set-Cookie": await commitSession(session),
+          },
+        }
+      );
+    }
+  }
 
   // Add the form values to context
   // @ts-expect-error Overload not externally visible
-  await addFormValuesToContext({ formType, formStructure, request, context });
+  await addFormValuesToContext({ formType, formStructure, body, context });
 
   // Validate the form inputs using the validation
   // methods from the form structure
@@ -73,8 +97,6 @@ async function formActionFunction({
       validateFormFieldValue({ context, formField });
     }
   }
-
-  // console.log({ context });
 
   session.set("context", context);
 
@@ -122,7 +144,7 @@ async function formActionFunction({
       context.formStage = formStage;
 
       // Handle data
-      if (formStage === "end") {
+      if (formStage === "end" && submitType === "submit") {
         return await handleFormData({
           handleDataFn,
           commitSession,
@@ -135,6 +157,9 @@ async function formActionFunction({
         // All the inputs were correct, we want to go to
         // the next stage of the form
         context.currentStep += 1;
+        session.set("context", context);
+        console.log({ context });
+
         return json(
           {},
           {

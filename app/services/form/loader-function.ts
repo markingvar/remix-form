@@ -2,6 +2,7 @@ import { FormFieldInput } from "~/services/form/types";
 import { getSession, commitSession } from "~/services/form/session.server";
 import { json } from "remix";
 import { addFieldToContext, checkForFieldNameAndValue } from "./loader-utils";
+import { getFormStage } from "./shared";
 
 async function formLoaderFunction({
   formType,
@@ -57,6 +58,13 @@ async function formLoaderFunction({
     context.currentStep = 0;
   }
 
+  if (formType === "multipart") {
+    // @ts-expect-error function overload signature issue
+    let formStage = getFormStage({ context, formStructure });
+
+    context.formStage = formStage;
+  }
+
   session.set("context", context);
 
   if (formType === "multipart") {
@@ -108,6 +116,12 @@ function checkExistingContext({
   formStructure: FormFieldInput[][] | FormFieldInput[];
   context: any;
 }): any {
+  // If context does not exist, return early. We will need to
+  // seed the context with initial values
+  if (!context) {
+    return false;
+  }
+
   let incorrectContext = false;
 
   if (formType === "multipart") {
@@ -164,7 +178,9 @@ function seedContextWithInitialValues({
   if (formType === "multipart") {
     for (const stepStructure of formStructure) {
       for (const field of stepStructure) {
-        addFieldToContext({ field, context });
+        if (field) {
+          addFieldToContext({ field, context });
+        }
       }
     }
 
@@ -173,8 +189,10 @@ function seedContextWithInitialValues({
 
   if (formType === "basic") {
     for (const field of formStructure) {
-      // @ts-expect-error function overload issue
-      addFieldToContext({ field, context });
+      if (field) {
+        // @ts-expect-error function overload issue
+        addFieldToContext({ field, context });
+      }
     }
   }
 

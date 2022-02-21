@@ -3,8 +3,9 @@ import { ActionFunction, LoaderFunction, Form, useLoaderData } from "remix";
 import { FormField } from "~/services/form/form-field";
 import { FormFieldInput } from "~/services/form/types";
 
-import { formActionFunction } from "~/services/form/multi-step/action-functions";
+import { formActionFunction } from "~/services/form/action-function";
 import { formLoaderFunction } from "~/services/form/loader-function";
+import { MultipartForm } from "~/services/form/multi-part";
 
 export const loader: LoaderFunction = async ({ request }) => {
   return await formLoaderFunction({
@@ -14,30 +15,24 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
+export const action: ActionFunction = async ({ request }) => {
+  return await formActionFunction({
+    formStructure: contactFormStructure,
+    formType: "multipart",
+    request,
+    handleDataFn: () => {
+      console.log("lol");
+    },
+    successRedirectPath: "/",
+  });
+};
+
 export default function ContactUsForm() {
   let data = useLoaderData();
 
   let { formStructure, context } = data;
 
-  console.log({ data });
+  console.log({ formStructure, context });
 
-  return (
-    <Form method="post">
-      {formStructure.map((field: FormFieldInput) => {
-        if (field) {
-          return <FormField field={field} context={context} key={field.name} />;
-        }
-      })}
-      {context.currentStep > 0 && (
-        <button name="submit-type" type="submit" value="back">
-          Back
-        </button>
-      )}
-      {context.currentStep < 2 && (
-        <button name="submit-type" type="submit" value="next">
-          Next
-        </button>
-      )}
-    </Form>
-  );
+  return <MultipartForm context={context} formStructure={formStructure} />;
 }

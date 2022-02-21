@@ -6,42 +6,38 @@ import { FormFieldInput } from "./types";
 async function addFormValuesToContext({
   formType,
   formStructure,
-  request,
+  body,
   context,
 }: {
   formType: "basic";
   context: any;
   formStructure: FormFieldInput[];
-  request: Request;
+  body: FormData;
 }): Promise<any>;
 async function addFormValuesToContext({
   formType,
   formStructure,
-  request,
+  body,
   context,
 }: {
   formType: "multipart";
   context: any;
   formStructure: FormFieldInput[][];
-  request: Request;
+  body: FormData;
 }): Promise<any>;
 async function addFormValuesToContext({
   formType,
   formStructure,
-  request,
+  body,
   context,
 }: {
   formType: "basic" | "multipart";
   context: any;
   formStructure: FormFieldInput[] | FormFieldInput[][];
-  request: Request;
+  body: FormData;
 }): Promise<any> {
   // Get the inputs from the form
-  const body = await request.formData();
-
   function addFieldToContext(field: FormFieldInput) {
-    // console.log({ field });
-
     // Get the form field value
     let formFieldValue =
       body.get(`${field.name}`)?.toString() || field.initialValue;
@@ -60,11 +56,13 @@ async function addFormValuesToContext({
       }
     }
 
-    // Add the field to context
-    context[`${field.name}`] = {
-      value: formFieldValue,
-      errors,
-    };
+    if (field) {
+      // Add the field to context
+      context[`${field.name}`] = {
+        value: formFieldValue,
+        errors,
+      };
+    }
 
     // If it is a stateful radio field, check for
     // dependent children
@@ -96,9 +94,17 @@ async function addFormValuesToContext({
     // Get the current form step to know what to add to context
     const currentFormStep = context.currentStep;
 
-    for (const field in formStructure[currentFormStep]) {
-      // @ts-expect-error overload selection error
-      addFieldToContext(field);
+    console.log({ currentFormStep });
+
+    console.log(formStructure[currentFormStep]);
+
+    // @ts-expect-error overload selection error
+    for (const field of formStructure[currentFormStep]) {
+      console.log({ field });
+
+      if (field) {
+        addFieldToContext(field);
+      }
     }
   }
 }
@@ -126,6 +132,12 @@ function validateFormFieldValue({
   context: any;
   formField: FormFieldInput;
 }) {
+  // currentStep and formStage are context properties
+  // that we don't want to validate
+  if (typeof formField !== "object") {
+    return;
+  }
+
   const currentFieldValue = context[`${formField.name}`].value;
   if (
     formField.type === "text" ||
@@ -148,6 +160,8 @@ function validateFormFieldValue({
           formField.validation.messages[index]
         )
       ) {
+        // console.log("add an error");
+
         context[`${formField.name}`].errors.push(
           formField.validation.messages[index]
         );
