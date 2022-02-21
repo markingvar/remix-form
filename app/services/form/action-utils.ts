@@ -127,7 +127,8 @@ function validateFormFieldValue({
   formField: FormFieldInput;
 }) {
   // currentStep and formStage are context properties
-  // that we don't want to validate
+  // that we don't want to validate, they are also not
+  // objects
   if (typeof formField !== "object") {
     return;
   }

@@ -48,7 +48,7 @@ export const contactFormStructure: MultiStepForm = [
           {
             name: "email-address",
             label: "Email Address",
-            type: "text",
+            type: "email",
             initialValue: "",
             required: true,
             validation: {

@@ -5,7 +5,12 @@ export type StatefulRadioField = {
   options: string[];
   initialValue: string;
   dependentChildren: [
-    StatefulRadioField | RadioField | TextField | undefined
+    | StatefulRadioField
+    | RadioField
+    | TextField
+    | EmailField
+    | PasswordField
+    | undefined
   ][];
 };
 
