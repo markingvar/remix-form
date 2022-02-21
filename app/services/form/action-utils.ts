@@ -94,14 +94,8 @@ async function addFormValuesToContext({
     // Get the current form step to know what to add to context
     const currentFormStep = context.currentStep;
 
-    console.log({ currentFormStep });
-
-    console.log(formStructure[currentFormStep]);
-
     // @ts-expect-error overload selection error
     for (const field of formStructure[currentFormStep]) {
-      console.log({ field });
-
       if (field) {
         addFieldToContext(field);
       }

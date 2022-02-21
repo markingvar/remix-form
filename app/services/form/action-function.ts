@@ -57,7 +57,7 @@ async function formActionFunction({
   let submitType: "back" | "next" | "submit" | string =
     body.get("submit-type")?.toString() ?? "";
 
-  console.log({ submitType });
+  // console.log({ submitType });
 
   // Multipart - back button
   if (formType === "multipart") {
@@ -158,7 +158,6 @@ async function formActionFunction({
         // the next stage of the form
         context.currentStep += 1;
         session.set("context", context);
-        console.log({ context });
 
         return json(
           {},

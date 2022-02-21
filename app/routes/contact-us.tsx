@@ -21,7 +21,7 @@ export const action: ActionFunction = async ({ request }) => {
     formType: "multipart",
     request,
     handleDataFn: () => {
-      console.log("lol");
+      console.log("Contact us data handler called!!");
     },
     successRedirectPath: "/",
   });
@@ -31,8 +31,6 @@ export default function ContactUsForm() {
   let data = useLoaderData();
 
   let { formStructure, context } = data;
-
-  console.log({ formStructure, context });
 
   return <MultipartForm context={context} formStructure={formStructure} />;
 }
