@@ -1,4 +1,5 @@
-import { FormFieldInput, validateFieldValue } from "../form-field";
+import { validateFieldValue } from "../form-field";
+import { FormFieldInput } from "../types";
 import { commitSession, getSession } from "../session.server";
 import { json, redirect } from "remix";
 

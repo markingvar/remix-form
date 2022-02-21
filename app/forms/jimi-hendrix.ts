@@ -1,5 +1,5 @@
 // Single Step Form
-import { FormStructure } from "./types";
+import { FormStructure } from "~/services/form/types";
 
 export const formStructure: FormStructure = [
   {

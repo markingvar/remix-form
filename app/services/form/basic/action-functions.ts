@@ -17,7 +17,7 @@ export async function addFormValuesToContext({
   const body = await request.formData();
 
   function addFieldToContext(field: FormFieldInput) {
-    console.log({ field });
+    // console.log({ field });
 
     // Get the form field value
     let formFieldValue =

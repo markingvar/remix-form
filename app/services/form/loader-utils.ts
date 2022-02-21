@@ -1,6 +1,6 @@
-import { FormFieldInput } from "./form-field";
+import { FormFieldInput } from "~/services/form/types";
 
-export function checkForFieldNameAndValue({
+function checkForFieldNameAndValue({
   field,
 
   context,
@@ -36,7 +36,7 @@ export function checkForFieldNameAndValue({
   return false;
 }
 
-export function addFieldToContext({
+function addFieldToContext({
   field,
   context,
 }: {
@@ -53,8 +53,6 @@ export function addFieldToContext({
   if (field.type === "stateful-radio") {
     field.dependentChildren.forEach((fields) => {
       fields.forEach((field) => {
-        console.log({ loaderField: field });
-
         if (typeof field !== "undefined") {
           addFieldToContext({ field, context });
         }
@@ -62,3 +60,5 @@ export function addFieldToContext({
     });
   }
 }
+
+export { addFieldToContext, checkForFieldNameAndValue };

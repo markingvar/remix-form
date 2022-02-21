@@ -1,7 +1,7 @@
 // Multi step form
 
 import { validation } from "~/services/form/validation";
-import { FormStructure } from "./types";
+import { FormStructure } from "~/services/form/types";
 
 type MultiStepForm = FormStructure[];
 

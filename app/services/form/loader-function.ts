@@ -1,4 +1,4 @@
-import { FormFieldInput } from "./form-field";
+import { FormFieldInput } from "~/services/form/types";
 import { getSession, commitSession } from "~/services/form/session.server";
 import { json } from "remix";
 import { addFieldToContext, checkForFieldNameAndValue } from "./loader-utils";
@@ -41,7 +41,7 @@ async function formLoaderFunction({
   // @ts-expect-error overloads not externally visible
   context = checkExistingContext({ formStructure, formType, context });
 
-  console.log({ context });
+  // console.log({ context });
   // If the context object doesn't have any length, we
   // know that it is empty and we need to seed it
   if (Object.keys(context).length < 1) {
@@ -173,7 +173,7 @@ function seedContextWithInitialValues({
 
   if (formType === "basic") {
     for (const field of formStructure) {
-      // @ts-expect-error function signature error
+      // @ts-expect-error function overload issue
       addFieldToContext({ field, context });
     }
   }

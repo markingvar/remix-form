@@ -1,8 +1,8 @@
 import { formStructure, handleFormData } from "~/forms/jimi-hendrix";
 import { ActionFunction, Form, LoaderFunction, useLoaderData } from "remix";
 import { FormField } from "~/services/form/form-field";
-import type { FormFieldInput } from "~/services/form/form-field";
-import { formActionFunction } from "~/services/form/basic/action-functions";
+import type { FormFieldInput } from "~/services/form/types";
+import { formActionFunction } from "~/services/form/action-function";
 import { formLoaderFunction } from "~/services/form/loader-function";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -14,16 +14,13 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  let handleFormFnResult = await formActionFunction({
+  return await formActionFunction({
+    formType: "basic",
     request,
     formStructure,
     handleDataFn: handleFormData,
     successRedirectPath: "/jimi-hendrix",
   });
-
-  let { formHandlerReturnFn } = handleFormFnResult;
-
-  return formHandlerReturnFn();
 };
 
 export default function JimiHendrix() {

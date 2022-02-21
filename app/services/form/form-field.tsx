@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { FormFieldInput, StatefulRadioField } from "~/services/form/types";
 
 function createFieldLabel(fieldName: string) {
   let words = fieldName.split("-");
@@ -8,18 +9,6 @@ function createFieldLabel(fieldName: string) {
   }
 
   return words.join(" ");
-}
-
-export function validateFieldValue({
-  value,
-  regex,
-}: {
-  value: string;
-  regex: string;
-}) {
-  let regexTestPattern = new RegExp(`${regex}`, "igm");
-
-  return regexTestPattern.test(value);
 }
 
 function displayFieldErrors({
@@ -41,77 +30,6 @@ function displayFieldErrors({
     </div>
   );
 }
-
-type StatefulRadioField = {
-  type: "stateful-radio";
-  name: string;
-  label: string;
-  options: string[];
-  initialValue: string;
-  dependentChildren: [
-    StatefulRadioField | RadioField | TextField | undefined
-  ][];
-};
-
-type RadioField = {
-  type: "radio";
-  name: string;
-  label: string;
-  options: string[];
-  initialValue: string;
-};
-
-type TextField = {
-  type: "text" | "textarea";
-  name: string;
-  label: string;
-  required?: boolean;
-  placeholder?: string;
-  initialValue?: string;
-  validation: {
-    formInputPattern?: string;
-    formInputMessage?: string;
-    patterns: string[];
-    messages: string[];
-  };
-};
-
-type PasswordField = {
-  type: "password";
-  name: string;
-  label: string;
-  required?: boolean;
-  placeholder?: string;
-  initialValue?: string;
-  validation: {
-    formInputPattern?: string;
-    formInputMessage?: string;
-    patterns: string[];
-    messages: string[];
-  };
-};
-
-type EmailField = {
-  type: "email";
-  name: string;
-  label: string;
-  required?: boolean;
-  placeholder?: string;
-  initialValue?: string;
-  validation: {
-    formInputPattern?: string;
-    formInputMessage?: string;
-    patterns: string[];
-    messages: string[];
-  };
-};
-
-export type FormFieldInput =
-  | StatefulRadioField
-  | RadioField
-  | TextField
-  | PasswordField
-  | EmailField;
 
 export function FormField({
   field,

@@ -1,6 +1,7 @@
 import { contactFormStructure } from "~/forms/contact-us";
 import { ActionFunction, LoaderFunction, Form, useLoaderData } from "remix";
-import { FormField, FormFieldInput } from "~/services/form/form-field";
+import { FormField } from "~/services/form/form-field";
+import { FormFieldInput } from "~/services/form/types";
 
 import { formActionFunction } from "~/services/form/multi-step/action-functions";
 import { formLoaderFunction } from "~/services/form/loader-function";
