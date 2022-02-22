@@ -115,7 +115,7 @@ function checkExistingContext({
 
   if (formType === "multipart") {
     for (const stepStructure of formStructure) {
-      // @ts-expect-error way she goes
+      // @ts-ignore
       for (const field of stepStructure) {
         if (incorrectContext) {
           return {};

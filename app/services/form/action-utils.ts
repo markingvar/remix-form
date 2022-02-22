@@ -8,34 +8,19 @@ async function addFormValuesToContext({
   formStructure,
   body,
   context,
-}: {
-  formType: "basic";
-  context: any;
-  formStructure: FormFieldInput[];
-  body: FormData;
-}): Promise<any>;
-async function addFormValuesToContext({
-  formType,
-  formStructure,
-  body,
-  context,
-}: {
-  formType: "multipart";
-  context: any;
-  formStructure: FormFieldInput[][];
-  body: FormData;
-}): Promise<any>;
-async function addFormValuesToContext({
-  formType,
-  formStructure,
-  body,
-  context,
-}: {
-  formType: "basic" | "multipart";
-  context: any;
-  formStructure: FormFieldInput[] | FormFieldInput[][];
-  body: FormData;
-}): Promise<any> {
+}:
+  | {
+      formType: "multipart";
+      context: any;
+      formStructure: FormFieldInput[][];
+      body: FormData;
+    }
+  | {
+      formType: "basic";
+      context: any;
+      formStructure: FormFieldInput[];
+      body: FormData;
+    }): Promise<any> {
   // Get the inputs from the form
   function addFieldToContext(field: FormFieldInput) {
     // Get the form field value
@@ -94,7 +79,9 @@ async function addFormValuesToContext({
     // Get the current form step to know what to add to context
     const currentFormStep = context.currentStep;
 
-    // @ts-expect-error overload selection error
+    console.log("lol: ", typeof formStructure[currentFormStep]);
+
+    // @ts-ignore
     for (const field of formStructure[currentFormStep]) {
       if (field) {
         addFieldToContext(field);
