@@ -102,8 +102,8 @@ export function FormField({
           placeholder={field.placeholder}
           onBlur={() => setFieldVisited(true)}
           onChange={onChange}
-          pattern={field.validation?.formInputPattern}
-          title={field.validation?.formInputMessage}
+          // pattern={field.validation?.formInputPattern}
+          // title={field.validation?.formInputMessage}
           type={field.type}
         />
       </label>
@@ -129,8 +129,8 @@ export function FormField({
           defaultValue={context[`${field.name}`]?.value}
           onBlur={() => setFieldVisited(true)}
           onChange={onChange}
-          pattern={field.validation?.formInputPattern}
-          title={field.validation?.formInputMessage}
+          // pattern={field.validation?.formInputPattern}
+          // title={field.validation?.formInputMessage}
           type="password"
         />
       </label>
@@ -154,8 +154,8 @@ export function FormField({
           placeholder={field.placeholder}
           onBlur={() => setFieldVisited(true)}
           onChange={onChange}
-          pattern={field.validation?.formInputPattern}
-          title={field.validation?.formInputMessage}
+          // pattern={field.validation?.formInputPattern}
+          // title={field.validation?.formInputMessage}
           type={field.type}
         />
       </label>

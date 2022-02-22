@@ -129,11 +129,15 @@ function validateFormFieldValue({
   // currentStep and formStage are context properties
   // that we don't want to validate, they are also not
   // objects
-  if (typeof formField !== "object") {
-    return;
-  }
+  console.log(typeof formField);
 
+  // if (typeof formField !== "object") {
+  //   console.log("I'm out..");
+
+  //   return;
+  // }
   const currentFieldValue = context[`${formField.name}`].value;
+
   if (
     formField.type === "text" ||
     formField.type === "textarea" ||
@@ -146,6 +150,8 @@ function validateFormFieldValue({
         value: currentFieldValue,
         regex: pattern,
       });
+
+      console.log("valueIsValid: ", valueIsValid);
 
       // Value is not valid
       // Push current error message onto array if it isn't already there
@@ -189,34 +195,21 @@ function checkContextForErrors({
   context,
   formType,
   formStructure,
-}: {
-  formStructure: FormFieldInput[];
-  formType: "basic";
-  context: any;
-}): boolean;
-function checkContextForErrors({
-  context,
-  formType,
-  formStructure,
-}: {
-  formStructure: FormFieldInput[][];
-  formType: "multipart";
-  context: any;
-}): boolean;
-function checkContextForErrors({
-  context,
-  formType,
-  formStructure,
-}: {
-  formStructure: FormFieldInput[] | FormFieldInput[][];
-  formType: "basic" | "multipart";
-  context: any;
-}): boolean {
+}:
+  | {
+      formStructure: FormFieldInput[];
+      formType: "basic";
+      context: any;
+    }
+  | {
+      formStructure: FormFieldInput[][];
+      formType: "multipart";
+      context: any;
+    }): boolean {
   let errorsPresent = false;
   // Basic form
   if (formType === "basic") {
-    for (const fieldValue in context) {
-      // @ts-expect-error Way of the road Bubbs
+    for (const fieldValue of context) {
       if (fieldValue?.errors?.length >= 1) {
         errorsPresent = true;
       }
@@ -239,23 +232,28 @@ function checkContextForErrors({
       fieldsToValidate.push(field.name);
 
       if (field.type === "stateful-radio") {
-        field.dependentChildren.forEach((fields) => {
-          fields.forEach((field) => {
-            if (field) {
-              fieldsToValidate.push(field.name);
-            }
-          });
+        let selectedIndex = field.options.indexOf(
+          context[`${field.name}`].value
+        );
+        field.dependentChildren[selectedIndex].forEach((nestedField) => {
+          if (nestedField) {
+            fieldsToValidate.push(nestedField.name);
+          }
         });
       }
     }
     // We only care about the context values in the current step
-    const fieldsToValidate: string[] = [];
-    for (const field in formStructure[currentFormStep]) {
-      // @ts-expect-error
-      addFieldNameToValidateToArray(field, fieldsToValidate);
+    let fieldsToValidate: string[] = [];
+
+    for (const field of formStructure[currentFormStep]) {
+      console.log({ field });
+
+      if (context) addFieldNameToValidateToArray(field, fieldsToValidate);
     }
 
-    for (const fieldToValidate in fieldsToValidate) {
+    console.log({ fieldsToValidate });
+
+    for (const fieldToValidate of fieldsToValidate) {
       if (context[`${fieldToValidate}`]?.errors?.length >= 1) {
         errorsPresent = true;
       }

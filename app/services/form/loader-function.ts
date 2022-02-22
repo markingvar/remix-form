@@ -89,33 +89,22 @@ async function formLoaderFunction({
 }
 
 // Check to see if the context applies to the current form
+
 function checkExistingContext({
   formType,
   formStructure,
   context,
-}: {
-  formType: "multipart";
-  formStructure: FormFieldInput[][];
-  context: any;
-}): any;
-function checkExistingContext({
-  formType,
-  formStructure,
-  context,
-}: {
-  formType: "basic";
-  formStructure: FormFieldInput[];
-  context: any;
-}): any;
-function checkExistingContext({
-  formType,
-  formStructure,
-  context,
-}: {
-  formType: "multipart" | "basic";
-  formStructure: FormFieldInput[][] | FormFieldInput[];
-  context: any;
-}): any {
+}:
+  | {
+      formType: "basic";
+      formStructure: FormFieldInput[];
+      context: any;
+    }
+  | {
+      formType: "multipart";
+      formStructure: FormFieldInput[][];
+      context: any;
+    }): any {
   // If context does not exist, return early. We will need to
   // seed the context with initial values
   if (!context) {
@@ -126,7 +115,7 @@ function checkExistingContext({
 
   if (formType === "multipart") {
     for (const stepStructure of formStructure) {
-      // @ts-expect-error function overload issue
+      // @ts-expect-error way she goes
       for (const field of stepStructure) {
         if (incorrectContext) {
           return {};

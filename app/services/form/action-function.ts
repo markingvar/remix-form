@@ -14,39 +14,21 @@ async function formActionFunction({
   formStructure,
   handleDataFn,
   successRedirectPath,
-}: {
-  formType: "basic";
-  request: Request;
-  formStructure: FormFieldInput[];
-  handleDataFn: any;
-  successRedirectPath: string;
-}): Promise<any>;
-async function formActionFunction({
-  formType,
-  request,
-  formStructure,
-  handleDataFn,
-  successRedirectPath,
-}: {
-  formType: "multipart";
-  request: Request;
-  formStructure: FormFieldInput[][];
-  handleDataFn: any;
-  successRedirectPath: string;
-}): Promise<any>;
-async function formActionFunction({
-  formType,
-  request,
-  formStructure,
-  handleDataFn,
-  successRedirectPath,
-}: {
-  formType: "basic" | "multipart";
-  request: Request;
-  formStructure: FormFieldInput[] | FormFieldInput[][];
-  handleDataFn: any;
-  successRedirectPath: string;
-}): Promise<any> {
+}:
+  | {
+      formType: "basic";
+      request: Request;
+      formStructure: FormFieldInput[];
+      handleDataFn: any;
+      successRedirectPath: string;
+    }
+  | {
+      formType: "multipart";
+      request: Request;
+      formStructure: FormFieldInput[][];
+      handleDataFn: any;
+      successRedirectPath: string;
+    }): Promise<any> {
   // Get the current session
   const session = await getSession(request.headers.get("Cookie"));
 
@@ -92,8 +74,9 @@ async function formActionFunction({
   if (formType === "multipart") {
     const currentFormStep = context.currentStep;
 
-    for (const formField in formStructure[currentFormStep]) {
-      // @ts-expect-error function overload issue
+    for (const formField of formStructure[currentFormStep]) {
+      console.log({ formField });
+
       validateFormFieldValue({ context, formField });
     }
   }
@@ -111,7 +94,7 @@ async function formActionFunction({
     formStructure,
   });
 
-  // console.log({ errorsInContext });
+  console.log({ errorsInContext, context });
 
   if (!errorsInContext) {
     // If there are no errors in the context we have two routes
