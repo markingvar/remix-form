@@ -74,6 +74,7 @@ async function formActionFunction({
   if (formType === "multipart") {
     const currentFormStep = context.currentStep;
 
+    // @ts-ignore
     for (const formField of formStructure[currentFormStep]) {
       console.log({ formField });
 
