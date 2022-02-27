@@ -13,11 +13,7 @@ export function MultipartForm({
     <div>
       <Form method="post">
         {formStructure.map((field: FormFieldInput) => {
-          if (field) {
-            return (
-              <FormField field={field} context={context} key={field.name} />
-            );
-          }
+          return <FormField field={field} context={context} key={field.name} />;
         })}
         {(context.formStage === "beginning" ||
           context.formStage === "middle") && (
@@ -52,9 +48,7 @@ export function BasicForm({
   return (
     <Form method="post">
       {formStructure.map((field: FormFieldInput) => {
-        if (field) {
-          return <FormField field={field} context={context} key={field.name} />;
-        }
+        return <FormField field={field} context={context} key={field.name} />;
       })}
       <button type="submit">Submit</button>
     </Form>

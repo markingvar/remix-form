@@ -20,17 +20,16 @@ function displayFieldErrors({
 }) {
   return (
     <div>
-      {fieldErrors.length >= 1 && fieldVisited ? (
-        fieldErrors.map((fieldError) => {
-          return <div key={fieldError}>{fieldError}</div>;
-        })
-      ) : (
-        <></>
-      )}
+      {fieldErrors.length >= 1 && fieldVisited
+        ? fieldErrors.map((fieldError) => {
+            return <div key={fieldError}>{fieldError}</div>;
+          })
+        : null}
     </div>
   );
 }
 
+// eslint-disable-next-line complexity
 export function FormField({
   field,
   context,
@@ -67,13 +66,11 @@ export function FormField({
 
         if (fieldIsValid) {
           setFieldErrors([]);
-        } else {
+        } else if (!fieldErrors.includes(field.validation.messages[index])) {
           // console.log("not valid");
 
           // Only display the error message once
-          if (!fieldErrors.includes(field.validation.messages[index])) {
-            setFieldErrors([...fieldErrors, field.validation.messages[index]]);
-          }
+          setFieldErrors([...fieldErrors, field.validation.messages[index]]);
         }
       });
     }
@@ -189,7 +186,7 @@ export function FormField({
       <>
         <div className="font-bold text-neutral-6">{field.label}</div>
         <span className="block h-1"></span>
-        {field.options?.map((radioValue, index) => {
+        {field.options.map((radioValue) => {
           const label = createFieldLabel(radioValue);
           return (
             <div
@@ -221,6 +218,7 @@ export function FormField({
   }
 
   if (field.type === "stateful-radio") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { StatefulRadio, selectedValue } = useStatefulRadio({
       field,
       context,
@@ -229,39 +227,55 @@ export function FormField({
     return (
       <>
         <StatefulRadio key={field.name} />
-        {selectedValue === 0 && field.dependentChildren[0].length >= 1
-          ? field.dependentChildren[0].map((field) => {
-              if (field) {
+        {selectedValue === 0
+          ? field.dependentChildren[0].map((nestedField) => {
+              if (nestedField) {
                 return (
-                  <FormField context={context} key={field.name} field={field} />
+                  <FormField
+                    context={context}
+                    key={nestedField.name}
+                    field={nestedField}
+                  />
                 );
               }
               return null;
             })
-          : selectedValue === 1 && field.dependentChildren[1].length >= 1
-          ? field.dependentChildren[1].map((field) => {
-              if (field) {
+          : selectedValue === 1
+          ? field.dependentChildren[1].map((nestedField) => {
+              if (nestedField) {
                 return (
-                  <FormField context={context} key={field.name} field={field} />
+                  <FormField
+                    context={context}
+                    key={nestedField.name}
+                    field={nestedField}
+                  />
                 );
               }
               return null;
             })
-          : selectedValue === 2 && field.dependentChildren[2].length >= 1
-          ? field.dependentChildren[2].map((field) => {
-              if (field) {
+          : selectedValue === 2
+          ? field.dependentChildren[2].map((nestedField) => {
+              if (nestedField) {
                 return (
-                  <FormField context={context} key={field.name} field={field} />
+                  <FormField
+                    context={context}
+                    key={nestedField.name}
+                    field={nestedField}
+                  />
                 );
               }
 
               return null;
             })
-          : selectedValue === 3 && field.dependentChildren[3].length >= 1
-          ? field.dependentChildren[3].map((field) => {
-              if (field) {
+          : selectedValue === 3
+          ? field.dependentChildren[3].map((nestedField) => {
+              if (nestedField) {
                 return (
-                  <FormField context={context} key={field.name} field={field} />
+                  <FormField
+                    context={context}
+                    key={nestedField.name}
+                    field={nestedField}
+                  />
                 );
               }
               return null;
@@ -281,7 +295,7 @@ function useStatefulRadio({
   context: any;
 }) {
   let selectedIndex = 0;
-  field?.options?.forEach((option, index) => {
+  field.options.forEach((option, index) => {
     if (context[`${field.name}`].value === option) {
       selectedIndex = index;
     }
@@ -293,7 +307,7 @@ function useStatefulRadio({
     return (
       <>
         <div>{field.label}</div>
-        {field.options?.map((radioValue, index) => {
+        {field.options.map((radioValue, index) => {
           const label = createFieldLabel(radioValue);
 
           if (index === selectedValue) {

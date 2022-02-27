@@ -92,10 +92,74 @@ export const contactFormStructure: MultiStepForm = [
   ],
 ];
 
-export function handleDataFn(context: any) {
+export async function handleDataFn(context: any): Promise<[boolean, string]> {
   console.log("multipart form handleDataFn called!");
 
   console.log({ context });
+
+  // Sort through the context to get the structure that
+  // we want
+
+  const lambdaUrl =
+    "https://moflill1wg.execute-api.ca-central-1.amazonaws.com/prod/";
+
+  const preferredContactMethod = createFieldLabel(
+    context["preferred-contact-method"].value
+  );
+
+  let data: {
+    contactName: string;
+    preferredContactMethod: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    desiredService: string;
+    projectDetails: string;
+  } = {
+    contactName: context["contact-name"].value,
+    preferredContactMethod,
+    desiredService: createFieldLabel(context[`desired-service`].value),
+    projectDetails: context["project-details"].value,
+  };
+
+  if (preferredContactMethod === "Email") {
+    data.contactEmail = context["email-address"].value;
+  }
+
+  if (preferredContactMethod === "Phone") {
+    data.contactPhone = context["phone-number"].value;
+  }
+
+  console.log({ data });
+
+  let clientRequest = await fetch(lambdaUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const clientRequestData = await clientRequest.json();
+
+  console.log({ clientRequestData });
+
+  let success = clientRequestData?.success;
+
+  if (success) {
+    return [true, "We got you message! We'll get back to you soon!"];
+  } else {
+    return [false, "There was an error submitting the form. Please try again."];
+  }
 }
 
-export const successRedirectPath = "/";
+export const successRedirectPath = "/form-submit-success";
+
+function createFieldLabel(fieldName: string) {
+  let words = fieldName.split("-");
+
+  for (let i = 0; i < words.length; i++) {
+    words[i] = words[i][0].toUpperCase() + words[i].slice(1);
+  }
+
+  return words.join(" ");
+}

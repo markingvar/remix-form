@@ -1,9 +1,20 @@
-import { redirect } from "remix";
+import { redirect, json } from "remix";
 import { FormFieldInput } from "./types";
+
+// A bot entered a value into a hidden field
+function honeypotFieldHasValue({ body }: { body: FormData }) {
+  let honeypotField = body.get("username");
+
+  if (honeypotField) {
+    return true;
+  }
+
+  return false;
+}
 
 // Take the form values from the request
 // form data and add them to context
-async function addFormValuesToContext({
+function addFormValuesToContext({
   formType,
   formStructure,
   body,
@@ -20,12 +31,12 @@ async function addFormValuesToContext({
       context: any;
       formStructure: FormFieldInput[];
       body: FormData;
-    }): Promise<any> {
+    }): any {
   // Get the inputs from the form
   function addFieldToContext(field: FormFieldInput) {
     // Get the form field value
     let formFieldValue =
-      body.get(`${field.name}`)?.toString() || field.initialValue;
+      body.get(`${field.name}`)?.toString() ?? field.initialValue;
 
     let errors: string[] = [];
     // If a field is required and not present, we need to add an error
@@ -41,7 +52,7 @@ async function addFormValuesToContext({
       }
     }
 
-    if (field) {
+    if (typeof field === "object") {
       // Add the field to context
       context[`${field.name}`] = {
         value: formFieldValue,
@@ -57,9 +68,9 @@ async function addFormValuesToContext({
 
       field.dependentChildren.forEach((fields) => {
         if (typeof fields !== "undefined") {
-          fields.forEach((field) => {
-            if (field) {
-              addFieldToContext(field);
+          fields.forEach((nestedField) => {
+            if (nestedField) {
+              addFieldToContext(nestedField);
             }
           });
         }
@@ -164,7 +175,7 @@ function validateFormFieldValue({
     const selectedValueIndex: number =
       formField.options.indexOf(currentFieldValue);
 
-    if (dependentChildren) {
+    if (typeof dependentChildren === "object") {
       dependentChildren[selectedValueIndex].forEach((dependentField) => {
         if (typeof dependentField !== "undefined") {
           validateFormFieldValue({ context, formField: dependentField });
@@ -212,6 +223,7 @@ function checkContextForErrors({
 
     // Using the current form step, get the context fields to
     // check for errors
+    // eslint-disable-next-line no-inner-declarations
     function addFieldNameToValidateToArray(
       field: FormFieldInput,
       fieldsToValidate: string[]
@@ -268,18 +280,19 @@ async function handleFormData({
   session: any;
   commitSession: any;
 }) {
-  // handle data - the data function should return a tuple
-  // the first item in the tuple will be a boolean to indicate
+  // Handle Data - the data function returns a tuple
+
+  // the first item is a boolean to indicate
   // whether the operation succeeded or failed
 
   // The second item in the tuple is the success or error message
-  let handleDataResult = handleDataFn(context);
-  // let [success, message] = handleDataResult;
-  let success = true,
-    message = "Roped him with a bungie cord";
+
+  let handleDataResult: [boolean, string] = await handleDataFn(context);
+  let [success, message] = handleDataResult;
 
   if (success) {
     context.dataHandlerSuccessMessage = message;
+    context.dataHandlerErrorMessage = "";
     session.set("context", context);
 
     return redirect(successRedirectPath, {
@@ -288,12 +301,23 @@ async function handleFormData({
       },
     });
   } else {
+    context.dataHandlerSuccessMessage = "";
     context.dataHandlerErrorMessage = message;
     session.set("context", context);
+
+    return json(
+      {},
+      {
+        headers: {
+          "Set-Cookie": await commitSession(session),
+        },
+      }
+    );
   }
 }
 
 export {
+  honeypotFieldHasValue,
   addFormValuesToContext,
   validateFormFieldValue,
   validateFieldValue,

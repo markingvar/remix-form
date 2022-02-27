@@ -178,7 +178,7 @@ function seedContextWithInitialValues({
 
   if (formType === "basic") {
     for (const field of formStructure) {
-      if (field) {
+      if (typeof field === "object") {
         // @ts-expect-error function overload issue
         addFieldToContext({ field, context });
       }

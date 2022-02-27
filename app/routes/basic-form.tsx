@@ -9,7 +9,7 @@ import { formLoaderFunction } from "~/services/form/loader-function";
 import { BasicForm } from "~/services/form/form-types";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return await formLoaderFunction({
+  return formLoaderFunction({
     request,
     formStructure,
     formType: "basic",
@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  return await formActionFunction({
+  return formActionFunction({
     formType: "basic",
     request,
     formStructure,
@@ -29,7 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function JimiHendrix() {
   let data = useLoaderData();
 
-  const { formStructure, context } = data;
+  const { context } = data;
 
   return <BasicForm formStructure={formStructure} context={context} />;
 }

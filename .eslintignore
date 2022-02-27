@@ -1,0 +1,9 @@
+node_modules
+build
+public
+functions
+tailwind.config.js
+postcss.config.js
+remix.config.js
+pm2.config.js
+.eslintrc.js

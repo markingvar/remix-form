@@ -1,7 +1,11 @@
-import { checkContextForErrors, handleFormData } from "./action-utils";
+import {
+  checkContextForErrors,
+  handleFormData,
+  honeypotFieldHasValue,
+} from "./action-utils";
 import { FormFieldInput } from "./types";
 import { commitSession, getSession } from "~/services/form/session.server";
-import { json } from "remix";
+import { json, redirect } from "remix";
 import {
   addFormValuesToContext,
   validateFormFieldValue,
@@ -35,6 +39,12 @@ async function formActionFunction({
   let context: any = session.get("context") ?? {};
 
   const body = await request.formData();
+
+  let honeypotFieldHit = honeypotFieldHasValue({ body });
+
+  if (honeypotFieldHit) {
+    return redirect("/");
+  }
 
   let submitType: "back" | "next" | "submit" | string =
     body.get("submit-type")?.toString() ?? "";
@@ -106,7 +116,7 @@ async function formActionFunction({
 
     // BASIC FORM
     if (formType === "basic") {
-      return await handleFormData({
+      return handleFormData({
         handleDataFn,
         commitSession,
         context,
@@ -116,42 +126,41 @@ async function formActionFunction({
     }
 
     // MULTIPART FORM
-    if (formType === "multipart") {
-      // Get the current form stage
-      // This will determine a couple things
-      // * What buttons we need to render on the form
-      // (Next, Back, Submit)
-      // * If we are at the end, we want to handle the data,
-      // otherwise we want to show the next step of the form
-      // @ts-expect-error function overload issue
-      const formStage = getFormStage({ formStructure, context });
-      context.formStage = formStage;
 
-      // Handle data
-      if (formStage === "end" && submitType === "submit") {
-        return await handleFormData({
-          handleDataFn,
-          commitSession,
-          context,
-          successRedirectPath,
-          session,
-        });
-      } else {
-        // Still at the beginning or middle of the form
-        // All the inputs were correct, we want to go to
-        // the next stage of the form
-        context.currentStep += 1;
-        session.set("context", context);
+    // Get the current form stage
+    // This will determine a couple things
+    // * What buttons we need to render on the form
+    // (Next, Back, Submit)
+    // * If we are at the end, we want to handle the data,
+    // otherwise we want to show the next step of the form
+    // @ts-expect-error function overload issue
+    const formStage = getFormStage({ formStructure, context });
+    context.formStage = formStage;
 
-        return json(
-          {},
-          {
-            headers: {
-              "Set-Cookie": await commitSession(session),
-            },
-          }
-        );
-      }
+    // Handle data
+    if (formStage === "end" && submitType === "submit") {
+      return handleFormData({
+        handleDataFn,
+        commitSession,
+        context,
+        successRedirectPath,
+        session,
+      });
+    } else {
+      // Still at the beginning or middle of the form
+      // All the inputs were correct, we want to go to
+      // the next stage of the form
+      context.currentStep += 1;
+      session.set("context", context);
+
+      return json(
+        {},
+        {
+          headers: {
+            "Set-Cookie": await commitSession(session),
+          },
+        }
+      );
     }
   }
 
