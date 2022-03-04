@@ -1,4 +1,4 @@
-import { FormStructure } from "~/forms/types";
+import { FormStructure } from "~/services/form/types";
 
 export const formStructure: FormStructure = [
   {
@@ -76,6 +76,7 @@ export function onFormCompleted({
   }
 
   // Likes JH
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (context["likes-jh"].value === "yes") {
     // No fav song
     if (context["fav-jh-song"].value === "no") {

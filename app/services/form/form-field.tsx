@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormFieldInput, StatefulRadioField } from "~/services/form/types";
+import { convertSingleQuotes } from "~/utils";
 
 function createFieldLabel(fieldName: string) {
   let words = fieldName.split("-");
@@ -62,7 +63,9 @@ export function FormField({
       field.validation.patterns.map((pattern, index: number) => {
         let regexTestPattern = new RegExp(pattern, "gim");
 
-        let fieldIsValid = regexTestPattern.test(e.target.value);
+        let value = convertSingleQuotes(e.target.value);
+
+        let fieldIsValid = regexTestPattern.test(value);
 
         if (fieldIsValid) {
           setFieldErrors([]);

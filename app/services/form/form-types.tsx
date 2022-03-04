@@ -5,13 +5,15 @@ import { FormField } from "./form-field";
 export function MultipartForm({
   context,
   formStructure,
+  action,
 }: {
   context: any;
   formStructure: FormFieldInput[];
+  action?: string;
 }) {
   return (
     <div>
-      <Form method="post">
+      <Form action={action} method="post">
         {formStructure.map((field: FormFieldInput) => {
           return <FormField field={field} context={context} key={field.name} />;
         })}
